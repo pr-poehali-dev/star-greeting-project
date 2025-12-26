@@ -8,10 +8,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Icon from '@/components/ui/icon';
+import { Slider } from '@/components/ui/slider';
 
 const Index = () => {
   const [selectedStar, setSelectedStar] = useState<any>(null);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedExample, setSelectedExample] = useState<any>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generatedText, setGeneratedText] = useState('');
 
   const categories = [
     { id: 'all', name: 'Все', icon: 'Sparkles' },
@@ -91,6 +95,8 @@ const Index = () => {
       description: 'Тёплое поздравление с пожеланиями',
       duration: '45 сек',
       icon: '🎂',
+      videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+      text: 'Дорогой Алексей! Поздравляю тебя с днём рождения! Желаю счастья, здоровья и успехов во всех начинаниях!',
     },
     {
       id: 2,
@@ -98,6 +104,8 @@ const Index = () => {
       description: 'Романтичное видео для молодожёнов',
       duration: '60 сек',
       icon: '💍',
+      videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+      text: 'Дорогие молодожёны! От всей души поздравляю вас с этим важным днём! Пусть ваша любовь будет крепкой и вечной!',
     },
     {
       id: 3,
@@ -105,6 +113,8 @@ const Index = () => {
       description: 'Поздравление для команды',
       duration: '30 сек',
       icon: '🎉',
+      videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+      text: 'Уважаемая команда! Поздравляю с отличными результатами этого года! Вы — лучшие!',
     },
     {
       id: 4,
@@ -112,8 +122,26 @@ const Index = () => {
       description: 'Нежное сообщение для любимых',
       duration: '40 сек',
       icon: '❤️',
+      videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+      text: 'Милая моя! Ты — самая прекрасная на свете. Люблю тебя больше всего на свете!',
     },
   ];
+
+  const handleGenerateText = async (occasion: string, recipientName: string) => {
+    setIsGenerating(true);
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    const templates: Record<string, string> = {
+      birthday: `Дорогой ${recipientName}! Поздравляю тебя с днём рождения! Желаю счастья, здоровья, успехов во всех делах и исполнения самых заветных желаний! Пусть каждый день приносит радость и новые достижения!`,
+      wedding: `Дорогие ${recipientName}! От всей души поздравляю вас с этим прекрасным днём! Пусть ваша любовь будет крепкой и вечной, а семейная жизнь наполнена счастьем и гармонией!`,
+      anniversary: `Поздравляю с годовщиной, ${recipientName}! Желаю вам продолжать радовать друг друга, беречь вашу любовь и создавать новые счастливые моменты вместе!`,
+      corporate: `Уважаемая команда! Поздравляю вас с отличными результатами! ${recipientName}, вы показали себя как настоящие профессионалы. Желаю дальнейших успехов!`,
+      other: `${recipientName}, поздравляю тебя! Желаю всего самого наилучшего, крепкого здоровья и позитивного настроения!`,
+    };
+    
+    setGeneratedText(templates[occasion] || templates.other);
+    setIsGenerating(false);
+  };
 
   const pricingPlans = [
     {
@@ -297,23 +325,45 @@ const Index = () => {
                     </Select>
                   </div>
                   <div>
-                    <label className="text-sm font-medium mb-2 block">Текст поздравления</label>
-                    <Textarea placeholder="Напишите текст, который должна озвучить звезда..." rows={4} />
+                    <label className="text-sm font-medium mb-2 flex items-center justify-between">
+                      <span>Текст поздравления</span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-purple-600 h-auto p-0 hover:bg-transparent"
+                        onClick={() => {
+                          const occasion = (document.querySelector('[name="occasion"]') as HTMLInputElement)?.value || 'other';
+                          const recipient = (document.querySelector('[name="recipient"]') as HTMLInputElement)?.value || 'друг';
+                          handleGenerateText(occasion, recipient);
+                        }}
+                        disabled={isGenerating}
+                      >
+                        <Icon name={isGenerating ? "Loader2" : "Sparkles"} size={14} className={`mr-1 ${isGenerating ? 'animate-spin' : ''}`} />
+                        {isGenerating ? 'Генерирую...' : 'Сгенерировать текст'}
+                      </Button>
+                    </label>
+                    <Textarea 
+                      placeholder="Напишите текст, который должна озвучить звезда..." 
+                      rows={4}
+                      value={generatedText}
+                      onChange={(e) => setGeneratedText(e.target.value)}
+                    />
                   </div>
                   <div>
                     <label className="text-sm font-medium mb-2 block">Имя получателя</label>
-                    <Input placeholder="Например: Алексей" />
+                    <Input name="recipient" placeholder="Например: Алексей" />
                   </div>
                   <div>
                     <label className="text-sm font-medium mb-2 block">Выберите тариф</label>
-                    <Select defaultValue="standard">
+                    <Select name="occasion" defaultValue="standard">
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="express">Экспресс - 2 часа</SelectItem>
-                        <SelectItem value="standard">Стандарт - 24 часа</SelectItem>
-                        <SelectItem value="premium">Премиум - 48 часов</SelectItem>
+                        <SelectItem value="audio">Аудио - 700₽</SelectItem>
+                        <SelectItem value="video30">Видео 30 сек - 1 450₽</SelectItem>
+                        <SelectItem value="video60">Видео 1 мин - 2 000₽</SelectItem>
+                        <SelectItem value="custom">Индивидуальный</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -339,23 +389,66 @@ const Index = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {examples.map((example) => (
-            <Card
-              key={example.id}
-              className="hover:shadow-xl transition-all duration-300 border-purple-100 cursor-pointer group"
-            >
-              <div className="h-40 bg-gradient-to-br from-purple-300 via-pink-300 to-orange-300 flex items-center justify-center text-6xl group-hover:scale-110 transition-transform duration-300">
-                {example.icon}
-              </div>
-              <CardContent className="p-4">
-                <h3 className="font-bold mb-2 flex items-center justify-between">
-                  {example.title}
-                  <Badge variant="outline" className="text-xs">
-                    {example.duration}
-                  </Badge>
-                </h3>
-                <p className="text-sm text-muted-foreground">{example.description}</p>
-              </CardContent>
-            </Card>
+            <Dialog key={example.id}>
+              <DialogTrigger asChild>
+                <Card
+                  className="hover:shadow-xl transition-all duration-300 border-purple-100 cursor-pointer group"
+                  onClick={() => setSelectedExample(example)}
+                >
+                  <div className="h-40 bg-gradient-to-br from-purple-300 via-pink-300 to-orange-300 flex items-center justify-center text-6xl group-hover:scale-110 transition-transform duration-300 relative">
+                    {example.icon}
+                    <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <Icon name="Play" size={48} className="text-white" />
+                    </div>
+                  </div>
+                  <CardContent className="p-4">
+                    <h3 className="font-bold mb-2 flex items-center justify-between">
+                      {example.title}
+                      <Badge variant="outline" className="text-xs">
+                        {example.duration}
+                      </Badge>
+                    </h3>
+                    <p className="text-sm text-muted-foreground">{example.description}</p>
+                  </CardContent>
+                </Card>
+              </DialogTrigger>
+              <DialogContent className="max-w-3xl">
+                <DialogHeader>
+                  <DialogTitle className="text-2xl flex items-center gap-2">
+                    <span>{selectedExample?.icon}</span>
+                    {selectedExample?.title}
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div className="aspect-video bg-black rounded-lg overflow-hidden">
+                    <video 
+                      controls 
+                      className="w-full h-full"
+                      poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='450'%3E%3Crect fill='%239b87f5' width='800' height='450'/%3E%3Ctext fill='white' font-size='24' x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle'%3E%D0%9F%D1%80%D0%B8%D0%BC%D0%B5%D1%80 %D0%B2%D0%B8%D0%B4%D0%B5%D0%BE%3C/text%3E%3C/svg%3E"
+                    >
+                      <source src={selectedExample?.videoUrl} type="video/mp4" />
+                    </video>
+                  </div>
+                  <div className="bg-purple-50 p-4 rounded-lg">
+                    <h4 className="font-semibold mb-2 flex items-center gap-2">
+                      <Icon name="MessageSquare" size={18} />
+                      Текст поздравления:
+                    </h4>
+                    <p className="text-sm text-muted-foreground italic">"{selectedExample?.text}"</p>
+                  </div>
+                  <div className="flex gap-3">
+                    <Button className="flex-1 bg-gradient-purple text-white hover:opacity-90">
+                      <Icon name="ShoppingCart" size={18} className="mr-2" />
+                      Заказать похожее
+                    </Button>
+                    <Button variant="outline" className="border-purple-200 hover:bg-purple-50">
+                      <Icon name="Share2" size={18} className="mr-2" />
+                      Поделиться
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
           ))}
         </div>
       </section>
