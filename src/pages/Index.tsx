@@ -117,38 +117,52 @@ const Index = () => {
 
   const pricingPlans = [
     {
-      name: 'Экспресс',
-      price: 'от 5000₽',
-      duration: '30 секунд',
-      delivery: '2 часа',
-      features: ['Базовая озвучка', 'Стандартное качество', 'Без правок'],
-      icon: 'Zap',
+      name: 'Аудио',
+      price: '700₽',
+      duration: 'Без ограничений',
+      delivery: '2-4 часа',
+      features: ['Голос звезды', 'MP3 формат', 'Составление текста бесплатно'],
+      icon: 'Mic2',
       gradient: 'from-orange-400 to-pink-500',
     },
     {
-      name: 'Стандарт',
-      price: 'от 10000₽',
-      duration: '60 секунд',
-      delivery: '24 часа',
-      features: ['Улучшенная озвучка', 'HD качество', '1 правка', 'Фоновая музыка'],
-      icon: 'Star',
+      name: 'Видео 30 сек',
+      price: '1 450₽',
+      duration: 'До 30 секунд',
+      delivery: '4-6 часов',
+      features: ['Видео HD', 'Голос + видеоряд', 'Составление текста бесплатно', 'Фоновая музыка'],
+      icon: 'Video',
       gradient: 'from-purple-500 to-pink-500',
       popular: true,
     },
     {
-      name: 'Премиум',
-      price: 'от 20000₽',
-      duration: '90 секунд',
-      delivery: '48 часов',
+      name: 'Видео 1 мин',
+      price: '2 000₽',
+      duration: '30-60 секунд',
+      delivery: '6-8 часов',
       features: [
-        'Премиум озвучка',
-        '4K качество',
-        '3 правки',
+        'Видео Full HD',
+        'Расширенный контент',
+        'Составление текста бесплатно',
         'Музыка и эффекты',
-        'Персональный менеджер',
+      ],
+      icon: 'Film',
+      gradient: 'from-purple-600 to-blue-500',
+    },
+    {
+      name: 'Индивидуальный',
+      price: 'Договорная',
+      duration: 'Свыше 2 минут',
+      delivery: 'По согласованию',
+      features: [
+        'Любая длительность',
+        'Премиум качество',
+        'Составление текста бесплатно',
+        'Полная кастомизация',
+        'Приоритетная поддержка',
       ],
       icon: 'Crown',
-      gradient: 'from-purple-600 to-blue-500',
+      gradient: 'from-purple-700 to-indigo-600',
     },
   ];
 
@@ -355,7 +369,7 @@ const Index = () => {
           <h2 className="text-4xl font-bold mb-4">Выберите свой план</h2>
           <p className="text-muted-foreground text-lg">От быстрых поздравлений до премиум-качества</p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
           {pricingPlans.map((plan) => (
             <Card
               key={plan.name}
